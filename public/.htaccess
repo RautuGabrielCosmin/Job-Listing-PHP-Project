@@ -1,0 +1,13 @@
+RewriteEngine On
+# if the request isn't already for /public
+RewriteCond %{REQUEST_URI} !^/public/
+# and it isn't a real file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# rewrite it into public/...
+RewriteRule ^(.*)$ /public/$1 [NC,L,QSA]
+
+# if someone hits the “bare” root, send ’em to public/index.php
+DirectoryIndex public/index.php
+
+<IfModule mod_dir.c> DirectoryIndex index.php </IfModule>
