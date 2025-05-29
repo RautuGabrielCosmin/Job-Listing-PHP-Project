@@ -69,4 +69,15 @@ function inspectAndDie($value)
     var_dump($value);
     echo "</pre>";
     die();
-}//end of inspectAndDie($value)
+} //end of inspectAndDie($value)
+
+/**
+ * Format the salary
+ * 
+ * @param string salary
+ * @return string formatted Salary
+ */
+function formatSalary($salary)
+{
+    return '$' . number_format(floatval(($salary)), 2, '.', '.');
+}
