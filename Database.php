@@ -32,10 +32,14 @@ class Database
      * @return PDOStatement
      * @throws PDOException
      */
-    public function query($query)
+    public function query($query, $params = array())
     {
         try {
             $sth = $this->conn->prepare($query);
+            //Bind named paramaters
+            foreach ($params as $param => $value) { //this allow to pass the parameters, allow real prepared statements that do not just allow user input like DROP DATABASE!
+                $sth->bindValue(':' . $param, $value);
+            }
             $sth->execute();
             return $sth;
         } catch (PDOException $e) {
