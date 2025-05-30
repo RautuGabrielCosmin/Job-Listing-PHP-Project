@@ -1,0 +1,17 @@
+{
+    "name": "rautugabrielcosmin/job-listing-php-project",
+    "description": "Job listing application",
+    "authors": [
+        {
+        "name": "Rautu Gabriel-Cosmin",
+        "email": "rautu_cosmin21@yahoo.com"
+        }
+    ],
+    "autoload":{
+        "psr-4":{
+            "Framework\\": "Framework/",
+            "App\\": "App/"
+        }
+        
+    }
+}

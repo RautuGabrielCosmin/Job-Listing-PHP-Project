@@ -19,7 +19,7 @@ function basePath($path = '')
  */
 function loadView($name, $data = [])
 {
-    $viewPath = basePath("views/{$name}.view.php");
+    $viewPath = basePath("App/views/{$name}.view.php");
     if (file_exists($viewPath)) { //if the file exists load the file
         extract($data);
         require $viewPath;
@@ -36,7 +36,7 @@ function loadView($name, $data = [])
  */
 function loadPartial($name)
 {
-    $partialPath = basePath("views/partials/{$name}.php");
+    $partialPath = basePath("App/views/partials/{$name}.php");
     if (file_exists($partialPath)) { //if the file exists load the file
         require $partialPath;
     } else { //else if the file does not exists "throw" this error
@@ -80,4 +80,4 @@ function inspectAndDie($value)
 function formatSalary($salary)
 {
     return '$' . number_format(floatval(($salary)), 2, '.', '.');
-}
+}//end of formatSalary($salary)

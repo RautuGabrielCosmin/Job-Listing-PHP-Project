@@ -1,8 +1,19 @@
 <?php
-
+require __DIR__ . '/../vendor/autoload.php'; //compose vendor
 require '../helpers.php';
-require basePath('Router.php');
-require basePath('Database.php');
+
+use Framework\Router;
+
+// require basePath('Framework/Router.php');
+// require basePath('Framework/Database.php');
+
+//loader of the class/classes without require/ SWITCHED WITH COMPOSER
+// spl_autoload_register(function ($class) {
+//     $path = basePath('Framework/' . $class . '.php');
+//     if (file_exists($path)) {
+//         require $path;
+//     }
+// });
 
 //Instatiate the router
 $router = new Router();
