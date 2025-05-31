@@ -80,4 +80,28 @@ function inspectAndDie($value)
 function formatSalary($salary)
 {
     return '$' . number_format(floatval(($salary)), 2, '.', '.');
-}//end of formatSalary($salary)
+} //end of formatSalary($salary)
+
+/**
+ * Sanitize Data
+ * doesn't allow html input into the form(create job form)
+ * @param string $input
+ * @return string
+ */
+function sanitize($input)
+{
+    return filter_var(trim($input), FILTER_SANITIZE_SPECIAL_CHARS);
+} //end of sanitize($input)
+
+
+/**
+ * Redirect to a given url
+ * 
+ * @param string $url
+ * @return void
+ */
+function redirect($url)
+{
+    header("Location: {$url}");
+    exit;
+}//end of redirect($url)
