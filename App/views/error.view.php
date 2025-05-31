@@ -1,5 +1,6 @@
 <?php
-http_response_code(404);
+$status = $status ?? '404';
+$message = $message ?? 'Oops! Something went wrong.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +8,7 @@ http_response_code(404);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>404 – Page Not Found</title>
+    <title><?= htmlspecialchars($status) ?> – <?= ($status === '403' ? 'Forbidden' : 'Page Not Found') ?></title>
     <style>
         * {
             margin: 0;
@@ -61,8 +62,8 @@ http_response_code(404);
 
 <body>
     <div class="wrapper">
-        <h1><?= $status ?></h1>
-        <p><?= $message ?></p>
+        <h1><?= htmlspecialchars($status) ?></h1>
+        <p><?= htmlspecialchars($message) ?></p>
         <button id="go-home">Go Home</button>
     </div>
 

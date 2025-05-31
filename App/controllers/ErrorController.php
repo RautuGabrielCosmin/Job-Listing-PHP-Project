@@ -18,7 +18,7 @@ class ErrorController
                 'message' => $message
             ]
         );
-    } //end of notFOund404($message = 'Resource not found')
+    } //end of notFOund404($message = 'Oops! We can’t find the page you’re looking for')
 
     /**
      * 404 unauthorized error

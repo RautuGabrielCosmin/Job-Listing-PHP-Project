@@ -33,9 +33,9 @@ class ListingController
         loadView('listings/create');
     }
 
-    public function show()
+    public function show($params)
     {
-        $id = $_GET['id'] ?? '';
+        $id = $params['id'] ?? '';
 
         $params = [
             'id' => $id
@@ -43,6 +43,15 @@ class ListingController
 
         $listing = $this->db->query('SELECT * FROM listings Where id = :id', $params)->fetch();
 
+        //check if listing exists
+        if (!$listing) {
+            ErrorController::notFound404();
+            return; // ← If you stop here (return), only the error page is sent.
+        }
+
+        // But if you forget to return, PHP continues into your normal layout,
+        // tries to include <head> partials, CSS links, etc., and that conflicts
+        // with the (somewhat standalone) HTML you already output in notFound404().
         loadView('listings/show', [
             'listing' => $listing
         ]);
