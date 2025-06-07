@@ -34,6 +34,11 @@ class ListingController
         loadView('listings/create');
     } //end of create()
 
+    /**
+     * Show a single listing job
+     * @param array $params
+     * @return void
+     */
     public function show($params)
     {
         $id = $params['id'] ?? '';
@@ -129,5 +134,34 @@ class ListingController
             redirect('/listings');
         }
     } //end of store()
+
+    /**
+     * Delete a listing job
+     * 
+     * @param array $params
+     * @return void
+     */
+    public function destroy($params)
+    {
+        $id = $params['id'];
+
+        $params = [
+            'id' => $id
+        ];
+
+        $listing = $this->db->query('SELECT * FROM listings WHERE id =:id', $params)->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound404('Listing not found!');
+            return;
+        }
+
+        $this->db->query('DELETE FROM listings WHERE id =:id', $params);
+
+        //Set flash messages for delete confirmation
+        $_SESSION['success_message'] = 'Listing deleted successfully';
+
+        redirect('/listings');
+    } //end of destroy($params)
 }
 //explode will take a string and turn it into an array; implode will take an array and turn it into a string
