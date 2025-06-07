@@ -163,5 +163,29 @@ class ListingController
 
         redirect('/listings');
     } //end of destroy($params)
+
+    /**
+     * Show the listing edit form
+     * 
+     * @param array $params
+     * @return void
+     */
+    public function edit($params)
+    {
+        $id = $params['id'] ?? '';
+
+        $params = [
+            'id' => $id
+        ];
+
+        $listing = $this->db->query('SELECT * FROM listings WHERE id =:id', $params)->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound404('Listing not found!');
+            return;
+        }
+
+        loadView('listings/edit', ['listing' => $listing]);
+    }
 }
 //explode will take a string and turn it into an array; implode will take an array and turn it into a string
