@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use Framework\Database;
 use Framework\Validation;
+use Framework\Session;
+use PDO;
 
 class UserController
 {
@@ -81,8 +83,124 @@ class UserController
                 ]
             );
             exit;
-        } else {
-            inspectAndDie('Store');
         }
+
+        //Check if email exists
+        $params = [
+            'email' => $email
+        ];
+
+        $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params)->fetch();
+
+        if ($user) {
+            $errors['email'] = 'That email already exists';
+            loadView('users/create', [
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
+        //Create user account
+        $params = [
+            'name' => $name,
+            'email' => $email,
+            'city' => $city,
+            'state' => $state,
+            'password' => password_hash($password, PASSWORD_DEFAULT)
+        ];
+
+        $this->db->query('INSERT INTO users (name, email, city, state, password) VALUES (:name, :email, :city, :state, :password)', $params);
+
+        //Get the new user ID
+        $userId = $this->db->conn->lastInsertId();
+
+        //Set Session
+        Session::set('user', [
+            'id' => $userId,
+            'name' => $name,
+            'email' => $email,
+            'city' => $city,
+            'state' => $state
+        ]);
+        redirect('/auth/login');
     } //end of store()
+
+    /**
+     * Logout a user and kill session
+     *
+     * @return void
+     */
+    public function logout()
+    {
+        Session::clearALL();
+
+        $params = session_get_cookie_params();
+        setcookie('PHPSESSID', '', time() - 86400, $params['path'], $params['domain']);
+
+        redirect('/');
+    } // end of logout
+
+    /**
+     * Authenticate a user with email and password
+     * 
+     * @return void
+     */
+    public function authenticate()
+    {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $errors = [];
+
+        //Validation
+        if (!Validation::email($email)) {
+            $errors['email'] = 'Please enter a valid email';
+        }
+
+        if (!Validation::string($password, 6, 100)) {
+            $errors['password'] = 'Password must be at least 6 characters';
+        }
+
+        // Check for errors
+        if (!empty($errors)) {
+            loadView('users/login', [
+                'errors' => $errors,
+            ]);
+            exit;
+        }
+
+        // Check for email
+        $params = [
+            'email' => $email
+        ];
+
+        $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params)->fetch();
+
+        if (!$user) {
+            $errors['email'] = 'Incorrect credentials';
+            loadView('users/login', [
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
+        // Check if password is correct
+        if (!password_verify($password, $user->password)) {
+            $errors['email'] = 'Incorrect credentials';
+            loadView('users/login', [
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
+        //Set user session
+        Session::set('user', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'city' => $user->city,
+            'state' => $user->state
+        ]);
+        redirect('/auth/login');
+    }
 }

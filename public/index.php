@@ -1,15 +1,17 @@
 <?php
 
-session_start();
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php'; //compose vendor
-require '../helpers.php';
 
 use Framework\Router;
+use Framework\Session;
+
+Session::startSession();
+
+require '../helpers.php';
 
 // require basePath('Framework/Router.php');
 // require basePath('Framework/Database.php');
