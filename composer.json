@@ -19,7 +19,7 @@
         }
     },
     "scripts":{
-        "tetst": "phpunit --color=always"
+        "test": "phpunit --colors=always"
     },
     "require-dev": {
         "phpunit/phpunit": "^12.2"
