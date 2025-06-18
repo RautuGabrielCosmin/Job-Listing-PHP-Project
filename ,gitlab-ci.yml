@@ -1,0 +1,48 @@
+stages:
+  - test
+  - build
+
+variables:
+  COMPOSER_CACHE_DIR: "$PROJECT_DIR/.cache/composer"
+
+cache:
+  paths:
+    - .cache/composer/
+
+
+unit_tests:
+  image: php:8.1
+  stage: test
+  before_script:
+    - apt-get update -qq && apt-get install -y --no-install-recommends unzip git zlib1g-dev libzip-dev
+    - docker-php-ext-install pdo pdo_mysql zip
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+  script:
+    - vendor/bin/phpunit --colors=never --testsuite "Application Test Suite"
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml
+    paths:
+      - junit.xml
+
+
+docker_build:
+  image: docker:stable
+  stage: build
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY"
+  script:
+    - docker build -t "$REGISTRY_IMAGE:$OMMIT_SHORT_SHA" .
+    - docker push "$REGISTRY_IMAGE:$COMMIT_SHORT_SHA"
+    - docker tag "$REGISTRY_IMAGE:$COMMIT_SHORT_SHA" "$REGISTRY_IMAGE:latest"
+    - docker push "$REGISTRY_IMAGE:latest"
+  only:
+    - main
+    - /^release\/.*$/
